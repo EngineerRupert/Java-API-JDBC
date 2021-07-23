@@ -1,5 +1,6 @@
 package ru.javaapi.project.Repository;
 
+import org.junit.Before;
 import org.junit.Test;
 import ru.javaapi.project.Model.Account;
 
@@ -7,31 +8,39 @@ import static org.junit.Assert.*;
 
 public class AccountRepoTest {
 
-    private AccountRepo accountRepo = new AccountRepo();
-    private final Account account = new Account("Sasha", "Ivanov");
+    private AccountRepo accountRepo;
+
+    @Before
+    public void setUp() throws Exception {
+        this.accountRepo =  new AccountRepo();
+    }
 
     @Test
-    public void findAccountByLogin() {
-
+    public void findAccountByLoginNotNull() {
+        // если мы только точно уверенны, что такой пользователь есть, к примеру какой-то тестовый пользователь
+        Account account = new Account("Sasha", "Ivanov");
         Account accountFound = accountRepo.findAccountByLogin(account.getLogin());
-        assertNotNull(accountFound.getLogin(), accountFound.getLastName());
+
+        assertNotNull(accountFound);
         assertEquals(account.getLogin(), accountFound.getLogin());
-        assertEquals(account.getLogin(), accountRepo.findAccountByLogin(account.getLogin()).getLogin());
+        assertEquals(account.getLastName(), accountFound.getLastName());
+    }
 
-        Account accountNull = accountRepo.findAccountByLogin("565");
-        assertNull(accountNull.getLogin(), accountNull.getLastName());
-
+    @Test
+    public void findAccountByLoginNull() {
+        Account accountFound = accountRepo.findAccountByLogin("565");
+        assertNull(accountFound);
     }
 
     @Test
     public void editAccountInfo() {
+        String login = "Pavel";
+        accountRepo.editAccountInfo(login, "Koshechkin");
+        Account accountEdited = accountRepo.findAccountByLogin(login);
 
-        accountRepo.editAccountInfo(account.getLogin(), "Pupkin");
-        Account accountEdited = accountRepo.findAccountByLogin(account.getLogin());
-
-        assertNotNull(accountEdited.getLastName(), accountEdited.getLastName());
-        assertEquals("Pupkin", accountEdited.getLastName());
-        assertEquals(account.getLogin(), accountEdited.getLogin());
+        assertNotNull(accountEdited);
+        assertEquals("Koshechkin", accountEdited.getLastName());
+        assertEquals(login, accountEdited.getLogin());
 
     }
 }

@@ -12,6 +12,7 @@ public class AccountRepo {
 
     public Account findAccountByLogin(String login) {
         Account account = new Account();
+
         // экономим место, закрываем соединение Connection и PreparedStatement "одним махом".
         try(Connection connection = new DbConnection().dbConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -27,15 +28,18 @@ public class AccountRepo {
         } catch(SQLException e) {
             e.printStackTrace();
         }
+        if (account.getLogin() == null) {
+            return null;
+        }
         return account;
     }
 
-    public void editAccountInfo(String login, String lastName) {
+    public void editAccountInfo(String login, String newLastName) {
         try(Connection connection = new DbConnection().dbConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update users set lastname = ? where login = ?")) {
 
-            preparedStatement.setString(1, lastName);
+            preparedStatement.setString(1, newLastName);
             preparedStatement.setString(2, login);
             preparedStatement.executeUpdate();
 
