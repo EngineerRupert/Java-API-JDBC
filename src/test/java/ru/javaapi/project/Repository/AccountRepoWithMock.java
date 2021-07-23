@@ -47,17 +47,8 @@ public class AccountRepoWithMock {
     public void editAccountInfo() {
         String login = "Pavel";
         String newLastname = "Koshechkin";
-
-        // выполняем метод на обновление фамилии у пользователя
         accountRepo.editAccountInfo(login, newLastname);
         verify(accountRepo,times(1)).editAccountInfo(login, newLastname);
-
-        // проверяем, что фамилия обновилась
-        given(accountRepo.findAccountByLogin(login)).willReturn(new Account(login, newLastname));
-        Account account = accountRepo.findAccountByLogin(login);
-        assertNotNull(account);
-        assertEquals(login, account.getLogin());
-        assertEquals(newLastname, account.getLastName());
     }
 
 }
