@@ -14,9 +14,9 @@ public class AccountRepo {
         Account account = new Account();
 
         // экономим место, закрываем соединение Connection и PreparedStatement "одним махом".
-        try(Connection connection = new DbConnection().dbConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select login, lastname from users where login = ?")) {
+        try (Connection connection = new DbConnection().dbConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "select login, lastname from users where login = ?")) {
 
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -25,7 +25,7 @@ public class AccountRepo {
                 account.setLastName(resultSet.getString("lastname"));
             }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         if (account.getLogin() == null) {
@@ -35,17 +35,33 @@ public class AccountRepo {
     }
 
     public void editAccountInfo(String login, String newLastName) {
-        try(Connection connection = new DbConnection().dbConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update users set lastname = ? where login = ?")) {
+        try (Connection connection = new DbConnection().dbConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "update users set lastname = ? where login = ?")) {
 
             preparedStatement.setString(1, newLastName);
             preparedStatement.setString(2, login);
             preparedStatement.executeUpdate();
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void createAccount(String login, String lastName) {
+        try (Connection connection = new DbConnection().dbConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "INSERT INTO accounts (login, last_name) VALUES (?, ?)")) {
+
+            stmt.setString(1, login);
+            stmt.setString(2, lastName);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
